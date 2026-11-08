@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: lantern
+    runtime: node
+    plan: starter          # persistent disks need a paid instance type
+    buildCommand: npm ci && npm run build
+    startCommand: npm start # applies DB migrations, then serves the app
+    healthCheckPath: /login
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: DATABASE_PATH
+        value: /var/data/lantern.db
+      - key: BETTER_AUTH_SECRET
+        generateValue: true
+      - key: BETTER_AUTH_URL
+        sync: false         # set to the public URL, e.g. https://lantern.onrender.com
+    disk:
+      name: lantern-data
+      mountPath: /var/data
+      sizeGB: 1
